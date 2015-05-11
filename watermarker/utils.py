@@ -160,7 +160,7 @@ def determine_position(position, img, mark):
             else:
                 top = _int(top)
 
-    return (left, top)
+    return (int(left), int(top))
 
 def watermark(img, mark, position=(0, 0), opacity=1, scale=1.0, tile=False, greyscale=False, rotation=0, return_name=False, **kwargs):
     """
