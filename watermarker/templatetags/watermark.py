@@ -1,10 +1,13 @@
 from datetime import datetime
 from hashlib import sha1
-import Image
+from PIL import Image
 import errno
 import logging
 import os
 import traceback
+import requests
+from io import BytesIO
+import pytz
 
 from django.conf import settings
 from django import template
@@ -152,7 +155,7 @@ class Watermarker(object):
             modified = datetime.fromtimestamp(os.path.getmtime(wm_path))
 
             # only return the old file if things appear to be the same
-            if modified >= watermark.date_updated:
+            if pytz.utc.localize(modified) >= watermark.date_updated:
                 log.info('Watermark exists and has not changed.  Bailing out.')
                 return wm_url
 
@@ -200,7 +203,7 @@ class Watermarker(object):
     def watermark_path(self, basedir, base, ext, wm_name, obscure=True):
         """Determines an appropriate watermark path"""
 
-        hash = sha1(wm_name).hexdigest()
+        hash = sha1(wm_name.encode('utf-8')).hexdigest()
 
         # figure out where the watermark would be saved on the filesystem
         if obscure:
@@ -214,7 +217,7 @@ class Watermarker(object):
         try:
             root = self.get_url_path(new_file)
             os.makedirs(os.path.dirname(root))
-        except OSError, exc:
+        except OSError as exc:
             if exc.errno == errno.EEXIST:
                 # not to worry, directory exists
                 pass
