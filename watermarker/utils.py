@@ -4,7 +4,7 @@ Utilities for applying a watermark to an image using PIL.
 Original Source: http://code.activestate.com/recipes/362879/
 """
 
-import Image, ImageEnhance
+from PIL import Image, ImageEnhance
 import random
 import traceback
 
@@ -66,8 +66,7 @@ def determine_scale(scale, img, mark):
             scale = float(scale)
         except (ValueError, TypeError):
             pass
-
-        if type(scale) in (str, unicode) and scale.lower() == 'f':
+        if type(scale) in (str,) and scale.lower() == 'f':
             # scale, but preserve the aspect ratio
             scale = min(
                         float(img.size[0]) / mark.size[0],
@@ -90,7 +89,7 @@ def determine_rotation(rotation, mark):
     Determines the number of degrees to rotate the watermark image.
     """
 
-    if (isinstance(rotation, str) or isinstance(rotation, unicode)) \
+    if (isinstance(rotation, str)) \
         and rotation.lower() == 'r':
         rotation = random.randint(0, 359)
     else:
@@ -123,7 +122,7 @@ def determine_position(position, img, mark):
 
     if isinstance(position, tuple):
         left, top = position
-    elif isinstance(position, str) or isinstance(position, unicode):
+    elif isinstance(position, str):
         position = position.lower()
 
         # corner positioning
